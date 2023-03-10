@@ -1,0 +1,9 @@
+
+
+- Comprendre les favicon request et les virer/gérer
+
+- Laisser à poll la gestion des sockets ready ou non a recevoir des choses
+
+- Une fois qu'un recv a été fait, on doit faire changer l'état de la socket par POLLIN | POLLOUT pour au deuxième tour de poll pouvoir écrire.
+
+- Si on grab que la chaine n'a pas été envoyé en entier (content lenght requête POST), on ne change pas le POLLIN  POLLOUT tout de suite.

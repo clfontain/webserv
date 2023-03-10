@@ -1,15 +1,3 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: cfontain <cfontain@student.42.fr>          +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2022/04/12 14:32:38 by cfontain          #+#    #+#              #
-#    Updated: 2022/11/29 15:14:18 by cfontain         ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
 NAME		=	webserv
 
 VPATH		=	.
@@ -17,14 +5,26 @@ VPATH		=	.
 LIB			=	
 LIBDIR		=
 
-INCLDIR		=	$(addsuffix /include,$(LIBDIR) .)
+INCLDIR		=	$(addsuffix /includes,$(LIBDIR) .)
 BUILDIR		=	build
-DEPDIR		=	$(BUILDIR)/.deps
+DEPDIR		=	deps
 
+SRC			=	$(addprefix srcs/, main.cpp\
+					$(addprefix Parsing/,Parsing.cpp\
+										Parsing_utils.cpp\
+										Server.cpp\
+										Location.cpp)\
+					$(addprefix Server/,sans_nom.cpp\
+										Request.cpp\
+										utils_function.cpp\
+										Socket.cpp\
+										Client.cpp\
+										example_post.cpp\
+										webserver.cpp)\
+					$(addprefix CGI/, cgi.cpp)\
+				)
 
-
-SRC			=	main.cpp
-				
+SRCS_DIR	=	$(sort $(dir $(wildcard ./srcs/*/)))
 
 OBJ			=	$(SRC:%.cpp=$(BUILDIR)/%.o)
 DEP			=	$(SRC:%.cpp=$(DEPDIR)/%.d)
@@ -83,7 +83,8 @@ all:	 	$(NAME)
 
 
 $(BUILDIR)/%.o:	%.cpp | $(DEPDIR)
-				
+				@mkdir -p build/ $(addprefix build/, $(SRCS_DIR))
+				@mkdir -p deps/ $(addprefix deps/, $(SRCS_DIR))
 				@printf "$(YELLOW)Compiling $@ and generating/checking make dependency file...$(DEFAULT)\n"
 				@$(CXX) $(DEPFLAGS) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
 				@printf '$(DELPREV)%-*s$(GREEN)$(CHECK)$(DEFAULT)\n' $(BODY_WIDTH) $(notdir $@)
@@ -109,6 +110,7 @@ clean:
 fclean:			clean
 				@printf "$(YELLOW)Deleting build directory...$(DEFAULT)\n"
 				@$(RM) $(BUILDIR) $(NAME)
+				@$(RM) $(DEPDIR) $(NAME)
 				@printf "$(DELPREV)Build directory and binary deleted\n"
 
 re:				fclean
