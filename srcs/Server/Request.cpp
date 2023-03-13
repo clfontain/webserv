@@ -57,7 +57,7 @@ void Request::SetServer(Server *serv)
 	this->serv = serv;
 }
 
-void Request::SetRequest(char *request)
+void Request::SetRequest(std::string request)
 {
 	this->request = request;
 }
@@ -171,7 +171,12 @@ void Request::request_to_cgi( void )
 	this->cgi.setPathAutoIndex(this->loc->getPathAutoIndex());
 
 	this->cgi.init_cgi();
-	this->SetResponse(this->cgi.getHtml());
+	// if (this->cgi.getImg())
+	// {
+	// 	this->SetResponse(this->cgi.getImg());
+	// }
+	// else
+		this->SetResponse(this->cgi.getHtml());
 }
 
 void Request::check_Protocol()

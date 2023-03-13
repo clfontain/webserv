@@ -120,9 +120,9 @@ void Socket::ft_poll( void )
 		ret = poll(pfd, nfds, timeout);
 		for (int i = 0; i < nfds; i++)
 		{
-			//std::cout << "pfd.fd = "<< pfd[i].fd << "pfd.events =" << pfd[i].events << "pfd.revents =" << pfd[i].revents << std::endl;
+			std::cout << "pfd.fd = "<< pfd[i].fd << "pfd.events =" << pfd[i].events << "pfd.revents =" << pfd[i].revents << std::endl;
 		}
-		//std::cout << "AFTER POLL" << std::endl;
+		std::cout << "AFTER POLL" << std::endl;
 		if (ret < 0)
 		{
 			perror("poll() failed");
@@ -160,9 +160,10 @@ int Socket::check_pfd( void )
 						continue;
 				}		
 			}
-			else if (pfd[i].revents != POLLIN)
+			else if (pfd[i].revents != POLLIN && pfd[i].revents != 4)
 			{
-				std::cout << "ERROR ! revents = " << pfd->revents << std::endl;
+				
+				std::cout << "ERROR ! revents = " << pfd[i].revents << std::endl;
 				end_serv = TRUE;
 				break;
 			}
@@ -181,7 +182,20 @@ int Socket::check_pfd( void )
 				if	(it->second->Get_end_co() == false)
 				{
 					it->second->set_parsing(this->get_parsing());
+					if (pfd[i].revents == 4)
+						it->second->Set_allowed_send(true);
 					it->second->fd_ready_IO(i);
+					if (it->second->Get_All_recv() == true)
+					{
+						std::cout << "ICI ????\n";
+						pfd[i].events |= POLLOUT;
+						std::cout << "events " << pfd[i].events << std::endl;
+					}	
+					if (it->second->Get_All_send() == true)
+					{
+						it->second->clear();
+						pfd[i].events = POLLIN;
+					}	
 				}
 				if (it->second->Get_end_co() == true)
 				{

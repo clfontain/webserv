@@ -46,7 +46,7 @@ class Request {
 		void SetR_Location(std::string &str);
 		void SetProtocol(std::string &str);
 		void SetParsing(Parsing *parsing);
-		void SetRequest(char *request);
+		void SetRequest(std::string request);
 		void SetServer(Server *serv);
 		void SetResponse(std::string Response);
 		void SetHeader(std::string Header);

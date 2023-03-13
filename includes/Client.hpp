@@ -12,15 +12,20 @@ class Client
 		Client();
 		Client(int socket);
 		~Client();
+		void clear();
 		int fd_ready_IO( int i);
 		int find_header();
 		int ft_recv( int i);
-		void check_lenght_body();
+		int check_lenght_body();
 		void Set_end_co( bool end_co);
+		void Set_allowed_send( bool end_co);
 		bool Get_end_co( void ) const;
+		bool Get_All_send( void ) const;
 		bool Get_All_recv();
 		bool Get_header_recv();
 		void parse_content_length(std::string str);
+		int parse_transfer_encoding(std::string str);
+		void parse_body_length();
 		time_t Get_timer();
 		void Set_timer(time_t timer);
 		void set_parsing(Parsing *parsing);
@@ -29,8 +34,9 @@ class Client
 
 	bool	header_recv;
 	bool	Content_length;
-	bool	Transfer_encoding;
-		bool	All_recv;
+	bool	All_recv;
+	bool	All_send;
+	bool	allowed_send;
 	char	buffer_in[1024];
 	char	buffer_out[1024];
 	std::string recv_str;

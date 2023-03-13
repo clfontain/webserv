@@ -6,7 +6,7 @@
 /*   By: amanasse <amanasse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 13:24:03 by amanasse          #+#    #+#             */
-/*   Updated: 2023/03/10 19:11:27 by amanasse         ###   ########.fr       */
+/*   Updated: 2023/03/13 13:07:48 by amanasse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -323,7 +323,6 @@ int Cgi::CheckExtension(void)
 	std::string value = this->getPathInfo();
 	std::string::size_type dotPos = value.find_last_of('.');
 	std::string extension = value.substr(dotPos);
-	std::cout << "EXT" << extension << std::endl;
 	if (extension == ".html")
 		return (1);
 	else if (extension == ".php")
@@ -415,7 +414,7 @@ std::string Cgi::CompleteString(std::string html)
 		size = html.size();
 		std::cout << RED << size << RESET << std::endl;
     	oss << size;
-		tmp = "HTTP/1.1 " + this->getStatus() + "\r\nContent-Type: image/png\r\nContent-Length: " + oss.str() + "\r\n\n";
+		tmp = "HTTP/1.1 " + this->getStatus() + "\r\nContent-Type: image/png\r\nContent-Length: 4868"/* + oss.str() */+ "\r\n\n";
 		this->_img = false;
 	}
 	else
@@ -434,31 +433,28 @@ int Cgi::Interprate_img(void)
 	std::cout << "je suis la";
 	std::string status = this->getStatus();
 	std::string html = html_to_string(status);
-	// std::string		line;
-	// std::ifstream	file("srcs/CGI/html/binaire");
+
+	std::ifstream input(_PathInfo.c_str(), std::ios::binary);
+
+	if (!input.is_open())
+		return (-1);
+	//calcul la taille
+	size_t ContentSize;
+	input.seekg(0, std::ios::end);
+	ContentSize = input.tellg();
+	std::cout << BOLD_YELLOW << "Content size : " << ContentSize << std::endl;
+	// input.seekg(0, std::ios::beg);
+	char *html_str = new char[ContentSize];
 	
-	// if (file.is_open() == true)
-	// {
-	// 	getline(file, line);
-	// 	line += "\n";
-	// 	file.close();
-	// }
-	// std::string html = line;
-	// html = CompleteString(html);
-	// std::cout << html << std::endl;
-	// this->setHtml(html);
-
-
+	//taille long converti en char*
+	//malloc la taille de s'quon a ouvert au dessus
+	//avec squon a ouvert(input) on read  dans content_bin
+	input.read(html_str, ContentSize);
+	std::cout << html_str << RESET << std::endl;
 	if (!(html.empty()))
 	{
-	    std::string binaryString;
-	    for (std::size_t i = 0; i < html.size(); ++i) 
-		{
-	        binaryString += std::bitset<8>(html[i]).to_string();
-	    }
-		binaryString = CompleteString(binaryString);
-		std::cout << "COMPLETE : " << binaryString << std::endl;
-		this->setHtml(binaryString);
+		html = CompleteString(html);
+		this->setHtml(html);
 	}
 	else
 		return (-1);
